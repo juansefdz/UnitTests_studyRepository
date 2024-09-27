@@ -80,7 +80,7 @@ class AccountTest {
         String expectedMessage = "Saldo insuficiente";
         String actualMessage = exception.getMessage();
 
-        assertEquals(expectedMessage, actualMessage);
+        assertEquals(expectedMessage, actualMessage); // --> verifica que el mensaje de la excepción sea "Saldo insuficiente" va a fallar, ya que el mensaje de la excepción es "Insufficient balance"
     }
 
 
