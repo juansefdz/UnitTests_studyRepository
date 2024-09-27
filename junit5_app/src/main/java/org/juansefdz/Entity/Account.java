@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 public class Account {
     private String user;
     private BigDecimal balance;
+    private Bank bank;
 
     public Account(String user, BigDecimal balance) {
         this.balance = balance;
@@ -38,6 +39,14 @@ public class Account {
     public void credit(BigDecimal amount ){
         this.balance = this.balance.add(amount);
     };
+
+    public Bank getBank() {
+        return bank;
+    }
+
+    public void setBank(Bank bank) {
+        this.bank = bank;
+    }
 
     @Override
     public boolean equals(Object obj) {//vamos a comparar por atributos y no por objeto
