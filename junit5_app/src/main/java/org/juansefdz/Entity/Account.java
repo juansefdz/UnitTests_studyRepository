@@ -27,6 +27,17 @@ public class Account {
         this.balance = balance;
     }
 
+    public void debit(BigDecimal amount ){
+        BigDecimal newBalance  = this.balance.subtract(amount);
+        if (newBalance.compareTo(BigDecimal.ZERO) < 0){
+            throw new IllegalArgumentException("Insufficient balance");
+        }
+        this.balance = newBalance;
+
+    };
+    public void credit(BigDecimal amount ){
+        this.balance = this.balance.add(amount);
+    };
 
     @Override
     public boolean equals(Object obj) {//vamos a comparar por atributos y no por objeto
