@@ -15,10 +15,10 @@ class AccountTest {
         account.setUser("Juan");  //                         --> al comentar y ejecutar el test, falla expected: Juan, actual: null
         String expectedName = "Juan";
         String actualName = account.getUser();
-        assertNotNull(actualName);
-        assertEquals(expectedName, actualName);
+        assertNotNull(actualName, ()-> "El nombre del usuario no puede ser nulo");
+        assertEquals(expectedName, actualName, ()-> "El nombre del usuario debe ser el esperado");
         assertTrue(actualName.equals("Juan"));
-        assertTrue(actualName.equals("Antonio"));            // --> va a fallar debido a que el valor actual es Juan
+        assertTrue(actualName.equals("Antonio"), ()-> "El nombre no es el esperado");            // --> va a fallar debido a que el valor actual es Juan
 
     }
 
@@ -113,14 +113,18 @@ class AccountTest {
         * */
 
         assertAll(
-                () -> assertEquals("500", account1.getBalance().toPlainString()),
+                () -> assertEquals("500", account1.getBalance().toPlainString(),
+                        () -> "El saldo de la cuenta 1 debe ser 500"),
 
-                () -> assertEquals("1500", account2.getBalance().toPlainString()),
+                () -> assertEquals("1500", account2.getBalance().toPlainString(),
+                        () -> "El saldo de la cuenta 2 debe ser 1500"),
 
-                () -> assertEquals(2, bank.getAccounts().size()),
+                () -> assertEquals(2, bank.getAccounts().size(),
+                        () -> "El banco debe tener 2 cuentas"),
                 //indica que hay 2 cuentas en el banco, debe arrojar que aprueba el test
 
-                () -> assertEquals("Banco de la gente", account1.getBank().getName()),
+                () -> assertEquals("Banco de la gente", account1.getBank().getName(),
+                        () -> "El nombre del banco de la cuenta 1 debe ser Banco de la gente"),
                     /*
                         - indica que el nombre del banco es "Banco de la gente", debe arrojar que aprueba el test
                         - si se elimina la relación account.setBank(this); en bank.java debería fallar el test
@@ -129,7 +133,8 @@ class AccountTest {
                 /* Verifica que el usuario de la primera cuenta encontrada con el nombre "Juan" sea "Juan"*/
                 () -> assertEquals("Juan", bank.getAccounts().stream()
                         .filter(a -> a.getUser().equals("Juan"))
-                        .findFirst().get().getUser()),
+                        .findFirst().get().getUser(),
+                        () -> "El usuario de la cuenta Juan debe ser Juan"),
                 /*Verifica que existe al menos una cuenta en el banco cuyo usuario es "Juan"*/
                 () -> assertTrue(bank.getAccounts().stream()
                         .anyMatch(a -> a.getUser().equals("juan"))) // --> va a fallar, ya que el nombre del usuario es "Juan" y no "juan"
