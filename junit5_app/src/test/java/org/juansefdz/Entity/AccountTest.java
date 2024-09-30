@@ -1,6 +1,8 @@
 package org.juansefdz.Entity;
 
 import org.juansefdz.Exceptions.InsufficientBalanceException;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -10,19 +12,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class AccountTest {
 
     @Test
+    @DisplayName("Test de nombre de usuario")
     void testUser() {
         Account account = new Account("", new BigDecimal("10000000.123"));
         account.setUser("Juan");  //                         --> al comentar y ejecutar el test, falla expected: Juan, actual: null
         String expectedName = "Juan";
         String actualName = account.getUser();
-        assertNotNull(actualName, ()-> "El nombre del usuario no puede ser nulo");
-        assertEquals(expectedName, actualName, ()-> "El nombre del usuario debe ser el esperado");
+        assertNotNull(actualName, () -> "El nombre del usuario no puede ser nulo");
+        assertEquals(expectedName, actualName, () -> "El nombre del usuario debe ser el esperado");
         assertTrue(actualName.equals("Juan"));
-        assertTrue(actualName.equals("Antonio"), ()-> "El nombre no es el esperado");            // --> va a fallar debido a que el valor actual es Juan
+        assertTrue(actualName.equals("Antonio"), () -> "El nombre no es el esperado");            // --> va a fallar debido a que el valor actual es Juan
 
     }
 
     @Test
+    @DisplayName("Test de saldo")
     void testBalance() {
         Account account = new Account("Juan", new BigDecimal("1000.12345"));
         assertNotNull(account.getBalance()); // el saldo no puede ser nulo
@@ -33,6 +37,8 @@ class AccountTest {
 
 
     @Test
+    @Disabled("Test deshabilitado temporalmente") // --> se deshabilita el test
+    @DisplayName("Test de referencia de cuenta")
     void testAccountReference() {
         Account account = new Account("Juan", new BigDecimal("12345.54321"));
         Account account2 = new Account("juan", new BigDecimal("12345.54321"));
@@ -44,7 +50,8 @@ class AccountTest {
     }
 
     @Test
-    void TestDebbitAccount() {
+    @DisplayName("Test de debito de cuenta")
+    void TestDebitAccount() {
 
         Account account = new Account("Juan", new BigDecimal("1000.123"));
 
@@ -57,7 +64,8 @@ class AccountTest {
     }
 
     @Test
-    void TestCredditAccount() {
+    @DisplayName("Test de credito a cuenta")
+    void TestCreditAccount() {
 
         Account account = new Account("Juan", new BigDecimal("1000.123"));
 
@@ -68,7 +76,8 @@ class AccountTest {
     }
 
     @Test
-    void TestDebbitAccountInsufficientBalance() {
+    @DisplayName("Test de saldo insuficiente")
+    void TestDebitAccountInsufficientBalance() {
 
         Account account = new Account("Juan", new BigDecimal("1000.123"));
 
@@ -84,6 +93,7 @@ class AccountTest {
     }
 
     @Test
+    @DisplayName("Test de transferencia de dinero")
     void TestTransferMoneyAccount() {
         Account account1 = new Account("Juan", new BigDecimal("1000"));
         Account account2 = new Account("Antonio", new BigDecimal("1000"));
@@ -96,7 +106,10 @@ class AccountTest {
     }
 
     @Test
+    @DisplayName("Test de relaciones de cuenta de banco")
     void TestBankAccountRelations() {
+
+        fail(); // con esto se fuerza a que el test falle
         Account account1 = new Account("Juan", new BigDecimal("1000"));
         Account account2 = new Account("Antonio", new BigDecimal("1000"));
 
@@ -109,8 +122,8 @@ class AccountTest {
         bank.transfer(account1, account2, new BigDecimal("500"));
 
         /*el AssertAll permite que todas las aserciones se ejecuten y se muestren en el reporte
-        * aunque una de ellas falle va a seguir ejecutando las demás y mostrando los resultados
-        * */
+         * aunque una de ellas falle va a seguir ejecutando las demás y mostrando los resultados
+         * */
 
         assertAll(
                 () -> assertEquals("500", account1.getBalance().toPlainString(),
@@ -132,8 +145,8 @@ class AccountTest {
 
                 /* Verifica que el usuario de la primera cuenta encontrada con el nombre "Juan" sea "Juan"*/
                 () -> assertEquals("Juan", bank.getAccounts().stream()
-                        .filter(a -> a.getUser().equals("Juan"))
-                        .findFirst().get().getUser(),
+                                .filter(a -> a.getUser().equals("Juan"))
+                                .findFirst().get().getUser(),
                         () -> "El usuario de la cuenta Juan debe ser Juan"),
                 /*Verifica que existe al menos una cuenta en el banco cuyo usuario es "Juan"*/
                 () -> assertTrue(bank.getAccounts().stream()
