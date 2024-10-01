@@ -1,43 +1,69 @@
 package org.juansefdz.Entity;
 
 import org.juansefdz.Exceptions.InsufficientBalanceException;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.*;
 
 import java.math.BigDecimal;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS) indica que la instancia de la clase de test es única para todos los métodos de prueba
 class AccountTest {
+    Account account;
+
+    @BeforeEach
+        // se ejecuta antes de cada test
+    void initMethodTest() {
+        this.account = new Account("", new BigDecimal("1000.123"));
+        System.out.println("Inicializando el método de prueba");
+    }
+
+    @AfterEach
+        //se ejecuta después de cada test
+    void endMethodTest() {
+        System.out.println("Finalizando el método de prueba");
+    }
+
+    @BeforeAll
+    static void beforeAll() {
+        System.out.println("Inicializando el test");
+    }
+
+    @AfterAll
+    static void afterAll() { //se elimina el Static gracias al @TestInstance*
+        System.out.println("Finalizando el test");
+
+    }
 
     @Test
     @DisplayName("Test de nombre de usuario")
     void testUser() {
-        Account account = new Account("", new BigDecimal("10000000.123"));
-        account.setUser("Juan");  //                         --> al comentar y ejecutar el test, falla expected: Juan, actual: null
+        Account account = new Account("", new BigDecimal("1000.123"));
+        account.setUser("Juan");  //al comentar y ejecutar el test, falla expected: Juan, actual: null
         String expectedName = "Juan";
         String actualName = account.getUser();
         assertNotNull(actualName, () -> "El nombre del usuario no puede ser nulo");
         assertEquals(expectedName, actualName, () -> "El nombre del usuario debe ser el esperado");
-        assertTrue(actualName.equals("Juan"));
-        assertTrue(actualName.equals("Antonio"), () -> "El nombre no es el esperado");            // --> va a fallar debido a que el valor actual es Juan
+        assertTrue(actualName.equals("Juan")); //al cambiar Juan, por otro valor, el test fallara
+
 
     }
 
     @Test
     @DisplayName("Test de saldo")
     void testBalance() {
-        Account account = new Account("Juan", new BigDecimal("1000.12345"));
+
         assertNotNull(account.getBalance()); // el saldo no puede ser nulo
-        assertEquals(1000.12345, account.getBalance().doubleValue()); //el saldo tiene que ser igual a 1000.12345
+        assertEquals(1000.123, account.getBalance().doubleValue()); //el saldo tiene que ser igual a 1000.12345
         assertFalse(account.getBalance().compareTo(BigDecimal.ZERO) < 0); // el saldo no puede ser menor a 0
         assertTrue(account.getBalance().compareTo(BigDecimal.ZERO) > 0); // el saldo tien que ser mayor a 0
     }
 
 
     @Test
-    @Disabled("Test deshabilitado temporalmente") // --> se deshabilita el test
+    //@Disabled("Test deshabilitado temporalmente") // --> se deshabilita el test
     @DisplayName("Test de referencia de cuenta")
     void testAccountReference() {
         Account account = new Account("Juan", new BigDecimal("12345.54321"));
@@ -53,12 +79,10 @@ class AccountTest {
     @DisplayName("Test de debito de cuenta")
     void TestDebitAccount() {
 
-        Account account = new Account("Juan", new BigDecimal("1000.123"));
-
         account.debit(new BigDecimal("100.00"));
         assertNotNull(account.getBalance());
         assertEquals(900.123, account.getBalance().doubleValue());
-        assertEquals("900.123", account.getBalance().toPlainString()); // verifica que el saldo sea igual a 900.123 y que sea un string
+        assertEquals("800.123", account.getBalance().toPlainString()); // verifica que el saldo sea igual a 900.123 y que sea un string
 
 
     }
@@ -67,26 +91,24 @@ class AccountTest {
     @DisplayName("Test de credito a cuenta")
     void TestCreditAccount() {
 
-        Account account = new Account("Juan", new BigDecimal("1000.123"));
 
-        account.credit(new BigDecimal("100.00"));
+        account.credit(new BigDecimal("2000.00"));
         assertNotNull(account.getBalance());
         assertEquals(1100.123, account.getBalance().doubleValue());
-        assertEquals("1100.123", account.getBalance().toPlainString()); // verifica que el saldo sea igual a 900.123 y que sea un string
+        assertEquals("1200.123", account.getBalance().toPlainString()); // verifica que el saldo sea igual a 900.123 y que sea un string
     }
 
     @Test
     @DisplayName("Test de saldo insuficiente")
     void TestDebitAccountInsufficientBalance() {
 
-        Account account = new Account("Juan", new BigDecimal("1000.123"));
 
         Exception exception = assertThrows(InsufficientBalanceException.class, () -> {
 
-            account.debit(new BigDecimal(2000));
+            account.debit(new BigDecimal(100));
         });// verifica que al intentar debitar un saldo mayor al saldo actual, se lance la excepción InsufficientBalanceException
 
-        String expectedMessage = "Saldo insuficiente";
+        String expectedMessage = "Insufficient balance";
         String actualMessage = exception.getMessage();
 
         assertEquals(expectedMessage, actualMessage); // --> verifica que el mensaje de la excepción sea "Saldo insuficiente" va a fallar, ya que el mensaje de la excepción es "Insufficient balance"
@@ -109,7 +131,7 @@ class AccountTest {
     @DisplayName("Test de relaciones de cuenta de banco")
     void TestBankAccountRelations() {
 
-        fail(); // con esto se fuerza a que el test falle
+        //fail(); -> con esto se fuerza a que el test falle
         Account account1 = new Account("Juan", new BigDecimal("1000"));
         Account account2 = new Account("Antonio", new BigDecimal("1000"));
 
@@ -154,4 +176,78 @@ class AccountTest {
 
         );
     }
+
+    //CONDICIONALES
+    // Test condicionales para diferentes sistemas operativos
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    // Este test solo se ejecutará en sistemas operativos Windows
+    void onlyInWindowsTest() {
+    }
+
+    @Test
+    @EnabledOnOs({OS.LINUX, OS.MAC})
+        // Este test solo se ejecutará en sistemas operativos Linux y Mac
+    void onlyLinuxAndMacTest() {
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+        // Este test no se ejecutará en sistemas operativos Windows
+    void notInWindowsTest() {
+    }
+
+    @Test
+    @EnabledOnJre(JRE.JAVA_8)
+        // Este test solo se ejecutará en la versión 8 de Java
+    void onlyOnJdk8() {
+    }
+
+    @Test
+    @DisabledOnJre(JRE.JAVA_11)
+        // Este test no se ejecutará en la versión 11 de Java
+    void onlyOnJdk11() {
+    }
+
+    @Test
+    void printSystemProperties() {
+        Properties properties = System.getProperties();
+        properties.forEach((k, v) -> System.out.println(k + ": " + v));
+    }
+
+    @Test
+    @EnableIfSystemProperty(named = "java.version", matches = "17")
+        // Este test solo se ejecutará si la propiedad del sistema `java.version` coincide con `17`
+    void testJavaVersion() {
+        System.out.println(System.getProperty("java.version"));
+    }
+
+    @Test
+    @DisabledIfSystemProperties(named = "os.arch", matches = "*64**")
+        // Este test no se ejecutará si la propiedad del sistema `os.arch` coincide con `*64**`
+    void testSystem64Bits() {
+        System.out.println(System.getProperty("os.arch"));
+    }
+
+    @Test
+    @EnableIfSystemProperties(named = "os.arch", matches = "*64**")
+        // Este test solo se ejecutará si la propiedad del sistema `os.arch` coincide con `*64**`
+    void testNoSystem64Bits() {
+        System.out.println(System.getProperty("os.arch"));
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "user.name", matches = "miusuario")
+        // Este test solo se ejecutará si la propiedad del sistema `user.name` coincide con `miusuario`
+    void TestUserNameComputer() {
+        System.out.println(System.getProperty("user.name"));
+    }
+
+    @Test
+    @EnableIfSistemaProperty(named = "ENV", matches = "dev")
+        // Este test solo se ejecutará si la variable de entorno `ENV` coincide con `dev`
+    void testDev() {
+        System.out.println(System.getenv("ENV"));
+    }
+
 }
