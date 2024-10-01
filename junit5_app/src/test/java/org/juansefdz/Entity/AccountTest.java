@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*;
 
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS) indica que la instancia de la clase de test es única para todos los métodos de prueba
 class AccountTest {
@@ -217,49 +218,91 @@ class AccountTest {
     }
 
     @Test
-    @EnabledIfSystemProperty(named = "java.version", matches = "17.*") // se ejecuta si la versión de java es 17
+    @EnabledIfSystemProperty(named = "java.version", matches = "17.*")
+        // se ejecuta si la versión de java es 17
     void testJavaVersion() {
         System.out.println(System.getProperty("java.version"));
     }
 
     @Test
-    @DisabledIfSystemProperty(named = "os.arch", matches = ".*64.*") // se ejecuta si el sistema no es de 64 bits
+    @DisabledIfSystemProperty(named = "os.arch", matches = ".*64.*")
+        // se ejecuta si el sistema no es de 64 bits
     void testSystem64Bits() {
         System.out.println(System.getProperty("os.arch"));
     }
 
     @Test
-    @EnabledIfSystemProperty(named = "os.arch", matches = ".*64.*") // se ejecuta si el sistema es de 64 bits
+    @EnabledIfSystemProperty(named = "os.arch", matches = ".*64.*")
+        // se ejecuta si el sistema es de 64 bits
     void testNoSystem64Bits() {
         System.out.println(System.getProperty("os.arch"));
     }
 
     @Test
-    @EnabledIfSystemProperty(named = "user.name", matches = "miusuario") // se ejecuta si el nombre de usuario es igual a miusuario
+    @EnabledIfSystemProperty(named = "user.name", matches = "miusuario")
+        // se ejecuta si el nombre de usuario es igual a miusuario
     void TestUserNameComputer() {
         System.out.println(System.getProperty("user.name"));
     }
 
     @Test
-    @EnabledIfEnvironmentVariable(named = "ENV", matches = "dev") // se ejecuta si la variable de entorno ENV es igual a dev
+    @EnabledIfEnvironmentVariable(named = "ENV", matches = "dev")
+        // se ejecuta si la variable de entorno ENV es igual a dev
     void testDevEnvironment() {
         System.out.println(System.getenv("ENV"));
     }
 
     @Test
     void printEnvironmentVariables() {
-       Map<String,String> getenv = System.getenv();
-       getenv.forEach((k,v)-> System.out.println(k + ": " + v));
+        Map<String, String> getenv = System.getenv();
+        getenv.forEach((k, v) -> System.out.println(k + ": " + v));
     }
 
     @Test
-    @EnabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*jdk-17.*") // se ejecuta si la variable de entorno JAVA_HOME contiene jdk-17
-    void testJavaHome(){
+    @EnabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*jdk-17.*")
+        // se ejecuta si la variable de entorno JAVA_HOME contiene jdk-17
+    void testJavaHome() {
     }
+
     @Test
-    @EnabledIfEnvironmentVariable(named = "NUMBER_OF_PROCESSORS", matches = "8") // se ejecuta si la variable de entorno NUMBER_OF_PROCESSORS contiene algún valor
-    void testProccessors(){
+    @EnabledIfEnvironmentVariable(named = "NUMBER_OF_PROCESSORS", matches = "8")
+        // se ejecuta si la variable de entorno NUMBER_OF_PROCESSORS contiene algún valor
+    void testProccessors() {
         System.out.println(Runtime.getRuntime().availableProcessors());
+    }
+
+    //ASSUMPTIONS - suposiciones
+    /*
+     * Las suposiciones son condiciones que se pueden establecer para que un test se ejecute o no
+     * */
+
+
+    @Test
+    @DisplayName("Test de saldo en Dev")
+    void testBalanceDev() {
+        boolean isDev = "DEV".equals(System.getProperty("ENV"));
+        assumeTrue(isDev); // si la variable de entorno ENV es igual a DEV, se ejecuta el test
+
+        assertNotNull(account.getBalance());
+        assertEquals(1000.123, account.getBalance().doubleValue());
+        assertFalse(account.getBalance().compareTo(BigDecimal.ZERO) < 0);
+        assertTrue(account.getBalance().compareTo(BigDecimal.ZERO) > 0);
+    }
+
+    @Test
+    @DisplayName("Test de saldo en Dev2")
+    void testBalanceDev2() {
+        boolean isDev = "DEV".equals(System.getProperty("ENV"));
+        assumingThat(isDev, () -> { //el assumingThat permite que se ejecute el test si la condición es verdadera
+            assertNotNull(account.getBalance());
+            assertEquals(1000.123, account.getBalance().doubleValue());
+
+        });
+        //puede tener más aserciones sin depender del assumingThat
+        assertFalse(account.getBalance().compareTo(BigDecimal.ZERO) < 0);
+        assertTrue(account.getBalance().compareTo(BigDecimal.ZERO) > 0);
+
+
     }
 
 
