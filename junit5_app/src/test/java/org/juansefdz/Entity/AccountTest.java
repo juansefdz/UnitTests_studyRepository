@@ -5,6 +5,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -244,4 +245,22 @@ class AccountTest {
     void testDevEnvironment() {
         System.out.println(System.getenv("ENV"));
     }
+
+    @Test
+    void printEnvironmentVariables() {
+       Map<String,String> getenv = System.getenv();
+       getenv.forEach((k,v)-> System.out.println(k + ": " + v));
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*jdk-17.*") // se ejecuta si la variable de entorno JAVA_HOME contiene jdk-17
+    void testJavaHome(){
+    }
+    @Test
+    @EnabledIfEnvironmentVariable(named = "NUMBER_OF_PROCESSORS", matches = "8") // se ejecuta si la variable de entorno NUMBER_OF_PROCESSORS contiene algún valor
+    void testProccessors(){
+        System.out.println(Runtime.getRuntime().availableProcessors());
+    }
+
+
 }
