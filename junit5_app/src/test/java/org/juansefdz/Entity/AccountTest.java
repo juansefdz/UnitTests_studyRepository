@@ -216,38 +216,32 @@ class AccountTest {
     }
 
     @Test
-    @EnableIfSystemProperty(named = "java.version", matches = "17")
-        // Este test solo se ejecutará si la propiedad del sistema `java.version` coincide con `17`
+    @EnabledIfSystemProperty(named = "java.version", matches = "17.*") // se ejecuta si la versión de java es 17
     void testJavaVersion() {
         System.out.println(System.getProperty("java.version"));
     }
 
     @Test
-    @DisabledIfSystemProperties(named = "os.arch", matches = "*64**")
-        // Este test no se ejecutará si la propiedad del sistema `os.arch` coincide con `*64**`
+    @DisabledIfSystemProperty(named = "os.arch", matches = ".*64.*") // se ejecuta si el sistema no es de 64 bits
     void testSystem64Bits() {
         System.out.println(System.getProperty("os.arch"));
     }
 
     @Test
-    @EnableIfSystemProperties(named = "os.arch", matches = "*64**")
-        // Este test solo se ejecutará si la propiedad del sistema `os.arch` coincide con `*64**`
+    @EnabledIfSystemProperty(named = "os.arch", matches = ".*64.*") // se ejecuta si el sistema es de 64 bits
     void testNoSystem64Bits() {
         System.out.println(System.getProperty("os.arch"));
     }
 
     @Test
-    @EnabledIfSystemProperty(named = "user.name", matches = "miusuario")
-        // Este test solo se ejecutará si la propiedad del sistema `user.name` coincide con `miusuario`
+    @EnabledIfSystemProperty(named = "user.name", matches = "miusuario") // se ejecuta si el nombre de usuario es igual a miusuario
     void TestUserNameComputer() {
         System.out.println(System.getProperty("user.name"));
     }
 
     @Test
-    @EnableIfSistemaProperty(named = "ENV", matches = "dev")
-        // Este test solo se ejecutará si la variable de entorno `ENV` coincide con `dev`
-    void testDev() {
+    @EnabledIfEnvironmentVariable(named = "ENV", matches = "dev") // se ejecuta si la variable de entorno ENV es igual a dev
+    void testDevEnvironment() {
         System.out.println(System.getenv("ENV"));
     }
-
 }
