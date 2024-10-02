@@ -23,11 +23,18 @@ import static org.junit.jupiter.api.Assumptions.*;
 class AccountTest {
     Account account;
 
+    private TestInfo testInfo;
+    private TestReporter testReporter;
+
     @BeforeEach
         // se ejecuta antes de cada test
-    void initMethodTest() {
+    void initMethodTest(TestInfo testInfo, TestReporter testReporter) {
         this.account = new Account("", new BigDecimal("1000.123"));
+        this.testInfo = testInfo;
+        this.testReporter = testReporter;
+
         System.out.println("Inicializando el método de prueba");
+        testReporter.publishEntry("ejecutando:  " + testInfo.getDisplayName() + " " + testInfo.getTestMethod().orElse(null).getName() + " y las etiquetas:  " + testInfo.getTags());
     }
 
     @AfterEach
@@ -53,6 +60,12 @@ class AccountTest {
         @Test
         @DisplayName("Test de nombre de usuario")
         void testUser() {
+
+            testReporter.publishEntry(testInfo.getTags().toString());
+            if (testInfo.getTags().contains("account")) {
+                testReporter.publishEntry("Es un test de cuenta");
+            }
+
             account.setUser("Juan");  //al comentar y ejecutar el test, falla expected: Juan, actual: null
             String expectedName = "Juan";
             String actualName = account.getUser();
