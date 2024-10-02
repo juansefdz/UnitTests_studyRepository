@@ -11,6 +11,8 @@ import java.util.Properties;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 
+
+
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS) indica que la instancia de la clase de test es única para todos los métodos de prueba
 class AccountTest {
     Account account;
@@ -342,6 +344,26 @@ class AccountTest {
         assertNotNull(account.getBalance());
         assertEquals(900.123, account.getBalance().doubleValue());
         assertEquals("800.123", account.getBalance().toPlainString()); // verifica que el saldo sea igual a 900.123 y que sea un string
+    }
+
+
+    //PARAMETERIZED TESTS - Test parametrizados
+
+    /*
+    * son aquellas pruebas que se repiten de manera constante pero con diferentes valores
+    * se agregan los datos para poder realizar las pruebas
+    * */
+
+
+    @DisplayName("Test de debito de cuenta parametrizado")
+    @ParameterizedTest (name = "Test {index} de debito de cuenta con valor {0} {argumentsWithNames}") //{0} {argumentsWithNames} son los valores que se van a mostrar se puede usar de las dos maneras
+    @ValueSource(strings = {"100", "200", "300", "400", "500"})
+    void TestDebitAccount(String amount) {
+
+        account.debit (new BigDecimal(amount));
+        assertNotNull(account.getBalance());
+        assertTrue(account.getBalance().compareTo(BigDecimal.ZERO) > 0);
+
     }
 
 
