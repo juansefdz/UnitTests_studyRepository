@@ -4,15 +4,19 @@ import org.juansefdz.Exceptions.InsufficientBalanceException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
-
 
 
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS) indica que la instancia de la clase de test es única para todos los métodos de prueba
@@ -334,7 +338,7 @@ class AccountTest {
      * el necesita el numero de veces que va a repetir el test
      * */
 
-    @RepeatedTest(value=5, name = "Test de debito de cuenta por repeticion {currentRepetition}/{totalRepetitions}")
+    @RepeatedTest(value = 5, name = "Test de debito de cuenta por repeticion {currentRepetition}/{totalRepetitions}")
     @DisplayName("Test de debito de cuenta por repeticion")
     void TestDebitAccountRepeated(RepetitionInfo info) {
         //se pueden realizar acciones en repeticiones especificas con el objeto RepetitionInfo que se pasa como argumento
@@ -352,20 +356,112 @@ class AccountTest {
     //PARAMETERIZED TESTS - Test parametrizados
 
     /*
-    * son aquellas pruebas que se repiten de manera constante pero con diferentes valores
-    * se agregan los datos para poder realizar las pruebas
-    * */
+     * son aquellas pruebas que se repiten de manera constante pero con diferentes valores
+     * se agregan los datos para poder realizar las pruebas
+     * */
+
+    @Nested
+    class ParameterizedTestClasses {
+        @DisplayName("Test de debito de cuenta parametrizado")
+        @ParameterizedTest(name = "Test {index} de debito de cuenta con valor {argumentsWithNames}")
+        //{0} {argumentsWithNames} se puede usar estas dos formas para mostrar el valor de los argumentos los ValueSource
+        @ValueSource(strings = {"100", "200", "300", "400", "500"})
+        void TestDebitAccountParameterized(String amount) {
+
+            account.debit(new BigDecimal(amount));
+            assertNotNull(account.getBalance());
+            assertTrue(account.getBalance().compareTo(BigDecimal.ZERO) > 0);
+
+        }
+
+        //PARAMETERIZED TESTS - OTHER FORMS
+
+        //parametrizadas con CSV
+        @DisplayName("Test de debito de cuenta parametrizado CSVsource")
+        @ParameterizedTest(name = "Test {index} de debito de cuenta con valor {argumentsWithNames}")
+        @CsvSource({"1,100", "2,200", "3,300", "4,400", "5,500"})
+        //se agregan los indices {indice,valor}
+        void TestDebitAccountParameterizedCSV(String index, String amount) {
+
+            System.out.println(index + " -> " + amount);
+            account.debit(new BigDecimal(amount));
+            assertNotNull(account.getBalance());
+            assertTrue(account.getBalance().compareTo(BigDecimal.ZERO) > 0);
+
+        }
+
+        //parametrizadas con CSVFile
+        @DisplayName("Test de debito de cuenta parametrizado con SCVfile")
+        @ParameterizedTest(name = "Test {index} de debito de cuenta con valor {argumentsWithNames}")
+        @CsvFileSource(resources = "/data.csv")
+        //se agrega el archivo csv en la ubicacion con los datos necesarios
+        void TestDAParameterizedCSVFile(String amount) {
+
+            System.out.println(" -> " + amount);
+            account.debit(new BigDecimal(amount));
+            assertNotNull(account.getBalance());
+            assertTrue(account.getBalance().compareTo(BigDecimal.ZERO) > 0);
+
+        }
 
 
-    @DisplayName("Test de debito de cuenta parametrizado")
-    @ParameterizedTest(name = "Test {index} de debito de cuenta con valor {0} {argumentsWithNames}") //{0} {argumentsWithNames} son los valores que se van a mostrar se puede usar de las dos maneras
-    @ValueSource(strings = {"100", "200", "300", "400", "500"})
-    void TestDebitAccount(String amount) {
+        //parametrizadas con CSV agregando saldo y balance
+        @DisplayName("Test de debito de cuenta parametrizado CSVsource")
+        @ParameterizedTest(name = "Test {index} de debito de cuenta con valor {argumentsWithNames}")
+        @CsvSource({"200,100,Juan,Andres", "250,200,Juan,Juan", "299,300,Maria,maria", "400,400,pepe,pepe", "150,500,toto,toto"})
+        //saldo y monto usuario esperado/actual
+        void TestDebitAccountParameterizedCSV2(String balance, String amount, String expectedUser, String actualUser) {
 
-        account.debit (new BigDecimal(amount));
+            System.out.println(balance + " -> " + amount);
+            account.setBalance(new BigDecimal(balance));
+            account.debit(new BigDecimal(amount));
+
+            account.setUser(actualUser);
+
+            assertNotNull(account.getBalance());
+            assertNotNull(account.getUser());
+            assertEquals(expectedUser, actualUser);
+
+            assertTrue(account.getBalance().compareTo(BigDecimal.ZERO) > 0);
+        }
+
+
+        //parametrizadas con CSVFile
+        @DisplayName("Test de debito de cuenta parametrizado con SCVfile 2")
+        @ParameterizedTest(name = "Test {index} de debito de cuenta con valor {argumentsWithNames}")
+        @CsvFileSource(resources = "/data2.csv")
+        void TestDAParameterizedCSVFile2(String balance, String amount, String expectedUser, String actualUser) {
+
+
+            account.debit(new BigDecimal(amount));
+            account.setBalance(new BigDecimal(balance));
+            account.debit(new BigDecimal(amount));
+            account.setUser(actualUser);
+            assertNotNull(account.getBalance());
+            assertNotNull(account.getUser());
+            assertEquals(expectedUser, actualUser);
+
+        }
+
+
+    }
+
+    //parametrizadas con método
+    @DisplayName("Test de debito de cuenta parametrizado con metodo")
+    @ParameterizedTest(name = "Test {index} de debito de cuenta con valor {argumentsWithNames}")
+    @MethodSource("amountsList")S
+    //se agrega el método que contiene los datos
+    void TestDAParameterizedMethodSource(String amount) {
+
+        System.out.println(" -> " + amount);
+        account.debit(new BigDecimal(amount));
         assertNotNull(account.getBalance());
         assertTrue(account.getBalance().compareTo(BigDecimal.ZERO) > 0);
 
+    }
+
+    static List<String> amountsList() {
+        return Arrays.asList("100", "200", "300", "400", "500");
     }
 
 
