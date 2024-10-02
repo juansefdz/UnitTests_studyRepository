@@ -321,4 +321,28 @@ class AccountTest {
         assertTrue(account.getBalance().compareTo(BigDecimal.ZERO) > 0);
     }
 
+    /*
+     *  REPEATED TESTS - Test repetidos
+     * Se pueden repetir los test un número determinado de veces
+     * cuando los argumentos o las variables cambian constantemente
+     * o se maneja un argumento o parametro aleatorio
+     * se cambia el @test por @RepeatedTest(#)
+     * el necesita el numero de veces que va a repetir el test
+     * */
+
+    @RepeatedTest(value=5, name = "Test de debito de cuenta por repeticion {currentRepetition}/{totalRepetitions}")
+    @DisplayName("Test de debito de cuenta por repeticion")
+    void TestDebitAccountRepeated(RepetitionInfo info) {
+        //se pueden realizar acciones en repeticiones especificas con el objeto RepetitionInfo que se pasa como argumento
+        if (info.getCurrentRepetition() == 3) {
+            System.out.println("estamos en la repeticion 3");
+        }
+
+        account.debit(new BigDecimal("100.00"));
+        assertNotNull(account.getBalance());
+        assertEquals(900.123, account.getBalance().doubleValue());
+        assertEquals("800.123", account.getBalance().toPlainString()); // verifica que el saldo sea igual a 900.123 y que sea un string
+    }
+
+
 }
