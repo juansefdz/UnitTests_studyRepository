@@ -47,6 +47,7 @@ class AccountTest {
     }
 
     //NESTED - Clases anidadas
+    @Tag("account")
     @Nested
     class accountTestUserBalance {
         @Test
@@ -83,10 +84,11 @@ class AccountTest {
         }
     }
 
+
     @Nested
     @DisplayName("Operaciones de cuenta debito y credito de cuentas bancarias y tansferencias")
     class OperationsTest {
-
+        @Tag("account")
         @Test
         @DisplayName("Test de debito de cuenta")
         void TestDebitAccount() {
@@ -97,6 +99,7 @@ class AccountTest {
             assertEquals("800.123", account.getBalance().toPlainString()); // verifica que el saldo sea igual a 900.123 y que sea un string
         }
 
+        @Tag("account")
         @Test
         @DisplayName("Test de credito a cuenta")
         void TestCreditAccount() {
@@ -107,6 +110,8 @@ class AccountTest {
             assertEquals("1200.123", account.getBalance().toPlainString()); // verifica que el saldo sea igual a 900.123 y que sea un string
         }
 
+        @Tag("account")
+        @Tag("bank")
         @Test
         @DisplayName("Test de transferencia de dinero")
         void TestTransferMoneyAccount() {
@@ -123,6 +128,8 @@ class AccountTest {
 
 
     @Test
+    @Tag("account")
+    @Tag("errors")
     @DisplayName("Test de saldo insuficiente")
     void TestDebitAccountInsufficientBalance() {
 
@@ -138,6 +145,8 @@ class AccountTest {
 
 
     @Test
+    @Tag("account")
+    @Tag("bank")
     @DisplayName("Test de relaciones de cuenta de banco")
     void TestBankAccountRelations() {
 
@@ -360,6 +369,7 @@ class AccountTest {
      * se agregan los datos para poder realizar las pruebas
      * */
 
+    @Tag("parametrized")
     @Nested
     class ParameterizedTestClasses {
         @DisplayName("Test de debito de cuenta parametrizado")
@@ -447,9 +457,10 @@ class AccountTest {
     }
 
     //parametrizadas con método
+    @Tag("parametrized")
     @DisplayName("Test de debito de cuenta parametrizado con metodo")
     @ParameterizedTest(name = "Test {index} de debito de cuenta con valor {argumentsWithNames}")
-    @MethodSource("amountsList")S
+    @MethodSource("amountsList")
     //se agrega el método que contiene los datos
     void TestDAParameterizedMethodSource(String amount) {
 
