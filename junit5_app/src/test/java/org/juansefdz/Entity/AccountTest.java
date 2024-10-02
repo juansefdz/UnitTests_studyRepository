@@ -10,10 +10,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
@@ -486,6 +488,32 @@ class AccountTest {
 
     static List<String> amountsList() {
         return Arrays.asList("100", "200", "300", "400", "500");
+    }
+
+    //TIMEOUTS - Tiempos de espera
+    @Nested
+    @Tag("timeout")
+    class TimeOutTest {
+        @Test
+        @Timeout(5)
+            // indica que el test se ejecutará en un tiempo máximo de 5 segundos
+        void testTimeout() throws InterruptedException {
+            TimeUnit.SECONDS.sleep(6); // se duerme el hilo por 6 segundos y hace fallar el test
+        }
+
+        @Test
+        @Timeout(value = 500, unit = TimeUnit.MILLISECONDS)
+        void testTimeout2() throws InterruptedException {
+            TimeUnit.MILLISECONDS.sleep(1100);
+        }
+
+        @Test
+        void testTimeoutAssertions() {
+            assertTimeout(Duration.ofSeconds(5), () -> {
+                TimeUnit.SECONDS.sleep(6);
+            });
+        }
+
     }
 
 
