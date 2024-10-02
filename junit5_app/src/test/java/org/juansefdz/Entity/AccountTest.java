@@ -3,6 +3,8 @@ package org.juansefdz.Entity;
 import org.juansefdz.Exceptions.InsufficientBalanceException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -356,7 +358,7 @@ class AccountTest {
 
 
     @DisplayName("Test de debito de cuenta parametrizado")
-    @ParameterizedTest (name = "Test {index} de debito de cuenta con valor {0} {argumentsWithNames}") //{0} {argumentsWithNames} son los valores que se van a mostrar se puede usar de las dos maneras
+    @ParameterizedTest(name = "Test {index} de debito de cuenta con valor {0} {argumentsWithNames}") //{0} {argumentsWithNames} son los valores que se van a mostrar se puede usar de las dos maneras
     @ValueSource(strings = {"100", "200", "300", "400", "500"})
     void TestDebitAccount(String amount) {
 
