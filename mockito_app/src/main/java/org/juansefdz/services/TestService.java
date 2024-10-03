@@ -2,6 +2,8 @@ package org.juansefdz.services;
 
 import org.juansefdz.entities.Exam;
 
+import java.util.Optional;
+
 public interface TestService {
-    Exam findTestByName(String name);
+    Optional<Exam> findTestByName(String name);
 }

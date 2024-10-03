@@ -14,13 +14,11 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Exam findTestByName(String name) {
+    public Optional<Exam> findTestByName(String name) {
 
-        Optional<Exam> testOptional = testRepository.findAll()
+        return testRepository.findAll()
                 .stream()
                 .filter(test -> test.getName().equals(name))
                 .findFirst();
-
-        return testOptional.orElse(null);
     }
 }
