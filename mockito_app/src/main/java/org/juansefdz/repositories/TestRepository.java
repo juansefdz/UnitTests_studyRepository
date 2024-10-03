@@ -1,10 +1,10 @@
 package org.juansefdz.repositories;
 
-import org.juansefdz.entities.Test;
+import org.juansefdz.entities.Exam;
 
 import java.util.List;
 
 public interface TestRepository {
 
-    List<Test> findAll();
+    List<Exam> findAll();
 }

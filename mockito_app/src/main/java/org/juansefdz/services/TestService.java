@@ -1,7 +1,7 @@
 package org.juansefdz.services;
 
-import org.juansefdz.entities.Test;
+import org.juansefdz.entities.Exam;
 
 public interface TestService {
-    Test findTestByName(String name);
+    Exam findTestByName(String name);
 }

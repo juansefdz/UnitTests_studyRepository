@@ -3,12 +3,12 @@ package org.juansefdz.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Test {
+public class Exam {
     private Long id;
     private String name;
     private List<String> questions;
 
-    public Test(Long id, String name) {
+    public Exam(Long id, String name) {
         this.id = id;
         this.name = name;
         this.questions = new ArrayList<>();

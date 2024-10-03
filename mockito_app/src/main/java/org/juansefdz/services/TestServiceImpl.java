@@ -1,6 +1,6 @@
 package org.juansefdz.services;
 
-import org.juansefdz.entities.Test;
+import org.juansefdz.entities.Exam;
 import org.juansefdz.repositories.TestRepository;
 
 import java.util.Optional;
@@ -14,9 +14,9 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Test findTestByName(String name) {
+    public Exam findTestByName(String name) {
 
-        Optional<Test> testOptional = testRepository.findAll()
+        Optional<Exam> testOptional = testRepository.findAll()
                 .stream()
                 .filter(test -> test.getName().equals(name))
                 .findFirst();
