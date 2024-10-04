@@ -9,12 +9,11 @@ public class OtherExamenRepository implements TestRepository {
     @Override
     public List<Exam> findAll() {
         try {
+            System.out.println("OtherExamenRepository");
             TimeUnit.SECONDS.sleep(5);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-
         return null;
     }
 }
