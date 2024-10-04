@@ -18,6 +18,6 @@ public class Data {
             "What is the atomic number of Oxygen?"
     );
 
-    public final static Exam exam = new Exam(4L, "Physics");
+    public final static Exam exam = new Exam(null, "Physics");
 
 }

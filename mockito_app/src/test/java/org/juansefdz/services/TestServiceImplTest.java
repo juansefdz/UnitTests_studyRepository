@@ -11,7 +11,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 
 import static org.mockito.Mockito.*;
 
@@ -130,19 +132,46 @@ class TestServiceImplTest {
 
     @Test
     void saveTest() {
-       Exam newExam = Data.exam;
-       newExam.setQuestions(Data.DATA_QUESTIONS);
 
-       when(testRepository.saveTest(any(Exam.class))).thenReturn(Data.exam);
-         Exam exam = testServiceImpl.saveTest(newExam);
+        //GIVEN - Preparar el entorno de pruebas
+        Exam newExam = Data.exam;
+        newExam.setQuestions(Data.DATA_QUESTIONS);
 
-         assertNotNull(exam.getId());
-         assertEquals(4L, exam.getId());
-         assertEquals("Physics", exam.getName());
+        when(testRepository.saveTest(any(Exam.class))).then(new Answer<Exam>() { //clases anonimas
 
-         verify(testRepository, times(1)).saveTest(any(Exam.class));
-         verify(questionsRepository).saveQuestions(anyList());
+            Long idSequence = 4L;
+            @Override
+            public Exam answer(InvocationOnMock invocationOnMock) throws Throwable {
+                Exam exam = invocationOnMock.getArgument(0);
+                exam.setId(idSequence++);
+                return exam;
+            } //se hace para que el examen tenga un id autoincremental
+        });
+
+        //WHEN - Ejecutar el método a probar
+
+        Exam exam = testServiceImpl.saveTest(newExam);
+
+        //THEN - Verificar el resultado
+
+        assertNotNull(exam.getId());
+        assertEquals(4L, exam.getId());
+        assertEquals("Physics", exam.getName());
+
+        verify(testRepository, times(1)).saveTest(any(Exam.class));
+        verify(questionsRepository).saveQuestions(anyList());
     }
 
+    /*
+    *   DESARROLLO IMPULSADO AL COMPORTAMIENTO (BDD)- BEHAVIOR DRIVEN DEVELOPMENT
+    *
+    *  BDD es una técnica de desarrollo de software que se centra en el comportamiento
+    * del software en lugar de en su estructura.
+    *
+    *   GIVEN - precondiciones o condiciones iniciales del entorno de pruebas
+    *   WHEN - ejecutar el método a probar
+    *   THEN - verificar el resultado
+    *
+    * */
 
 }
