@@ -33,9 +33,17 @@ public class TestServiceImpl implements TestService {
         Exam exam = null;
         if (examOptional.isPresent()) {
             exam = examOptional.orElseThrow();
-            List<String> questions= questionsRepository.findQuestionsByTestId(exam.getId());
+            List<String> questions = questionsRepository.findQuestionsByTestId(exam.getId());
             exam.setQuestions(questions);
         }
         return exam;
+    }
+
+    @Override
+    public Exam saveTest(Exam exam) {
+        if (!exam.getQuestions().isEmpty()) {
+            questionsRepository.saveQuestions(exam.getQuestions());
+        }
+        return testRepository.saveTest(exam);
     }
 }

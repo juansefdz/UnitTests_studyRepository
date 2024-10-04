@@ -128,5 +128,21 @@ class TestServiceImplTest {
         verify(questionsRepository, times(1)).findQuestionsByTestId(anyLong());
     }
 
+    @Test
+    void saveTest() {
+       Exam newExam = Data.exam;
+       newExam.setQuestions(Data.DATA_QUESTIONS);
+
+       when(testRepository.saveTest(any(Exam.class))).thenReturn(Data.exam);
+         Exam exam = testServiceImpl.saveTest(newExam);
+
+         assertNotNull(exam.getId());
+         assertEquals(4L, exam.getId());
+         assertEquals("Physics", exam.getName());
+
+         verify(testRepository, times(1)).saveTest(any(Exam.class));
+         verify(questionsRepository).saveQuestions(anyList());
+    }
+
 
 }
