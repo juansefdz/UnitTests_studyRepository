@@ -7,6 +7,11 @@ import org.juansefdz.repositories.TestRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.*;
 
@@ -16,12 +21,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 // Clase de prueba TestServiceImplTest
-@Nested
+@ExtendWith(MockitoExtension.class)
 class TestServiceImplTest {
-    private TestRepository testRepository;
-    TestService testService;
-    private QuestionsRepository questionsRepository;
 
+    @Mock
+    TestRepository testRepository;
+
+    @Mock
+    QuestionsRepository questionsRepository;
+
+    @InjectMocks
+    TestServiceImpl testServiceImpl;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+
+/*
+    CODIGO SIN INJECTMOKS
     @BeforeEach
     void setUp() { //preparar el entorno de pruebas
         // Crea un mock de TestRepository
@@ -31,7 +50,8 @@ class TestServiceImplTest {
         // Crea una instancia de TestServiceImpl usando el mock de TestRepository y el mock de QuestionsRepository
         testService = new TestServiceImpl(testRepository, questionsRepository);
 
-    }
+    }*/
+
 
     @Test
     void findTestByName() {
@@ -40,7 +60,7 @@ class TestServiceImplTest {
         when(testRepository.findAll()).thenReturn(Data.DATA_EXAMS);
 
         // Busca un examen por nombre
-        Optional<Exam> exam = testService.findTestByName("Math");
+        Optional<Exam> exam = testServiceImpl.findTestByName("Math");
 
         //verifica que el examen existe
         assertTrue(exam.isPresent());
@@ -57,7 +77,7 @@ class TestServiceImplTest {
         List<Exam> data = Collections.emptyList();
         // Cuando se llame al método findAll() del mock de TestRepository, entonces retorna la lista de exámenes vacía
         when(testRepository.findAll()).thenReturn(data);
-        Optional<Exam> exam = testService.findTestByName("Math");
+        Optional<Exam> exam = testServiceImpl.findTestByName("Math");
         assertFalse(exam.isPresent());
 
     }
@@ -68,7 +88,7 @@ class TestServiceImplTest {
         when(testRepository.findAll()).thenReturn(Data.DATA_EXAMS);
         when(questionsRepository.findQuestionsByTestId(anyLong())).thenReturn(Data.DATA_QUESTIONS);
 
-        Exam exam = testService.findTestByNameWithQuestions("Math");
+        Exam exam = testServiceImpl.findTestByNameWithQuestions("Math");
         assertEquals(3, exam.getQuestions().size());
         assertTrue(exam.getQuestions().contains("What is the result of 2+2?"));
     }
@@ -85,7 +105,7 @@ class TestServiceImplTest {
         when(testRepository.findAll()).thenReturn(Data.DATA_EXAMS);
         when(questionsRepository.findQuestionsByTestId(anyLong())).thenReturn(Data.DATA_QUESTIONS);
 
-        Exam exam = testService.findTestByNameWithQuestions("Math");
+        Exam exam = testServiceImpl.findTestByNameWithQuestions("Math");
         assertEquals(3, exam.getQuestions().size());
         assertTrue(exam.getQuestions().contains("What is the result of 2+2?"));
 
@@ -101,7 +121,7 @@ class TestServiceImplTest {
         when(testRepository.findAll()).thenReturn(Collections.emptyList());
         when(questionsRepository.findQuestionsByTestId(anyLong())).thenReturn(Data.DATA_QUESTIONS);
 
-        Exam exam = testService.findTestByNameWithQuestions("Math");
+        Exam exam = testServiceImpl.findTestByNameWithQuestions("Math");
         assertNull(exam);
         //uso del verify
         verify(testRepository, times(1)).findAll();
